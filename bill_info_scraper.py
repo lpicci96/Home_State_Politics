@@ -29,6 +29,7 @@ sh.setLevel(logging.INFO)
 rootLogger.addHandler(sh)
 
 
+# Get info for bills after 2008; website/html format changed between 2008 and 2009
 def get_info_post09(leg_list, year, leg_info_df):
 
     for leg in leg_list:
@@ -250,6 +251,8 @@ def get_info_post09(leg_list, year, leg_info_df):
 
     return leg_info_df
 
+
+# Get info for bills before 2009; website/html format changed between 2008 and 2009
 def get_info_pre09(leg_list, year, leg_info_df):
 
     for leg in leg_list:
