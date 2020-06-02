@@ -1,2 +1,2 @@
 # Gem_State_Politics
-Web scraper code for GSP
+Web scraping the Idaho State Legislature website for bill information, vote counts, and legislator information
