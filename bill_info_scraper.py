@@ -249,7 +249,7 @@ def get_info_post09(leg_list, year, leg_info_df):
 # Get info for bills before 2009; website/html format changed between 2008 and 2009
 def get_info_pre09(leg_list, year, leg_info_df):
 
-    for leg in leg_list[0:25]:
+    for leg in leg_list:
         link = f'https://legislature.idaho.gov/sessioninfo/{year}/legislation/{str(leg)}/'
         vote_page = requests.get(link)
 
