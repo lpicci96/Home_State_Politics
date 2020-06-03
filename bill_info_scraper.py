@@ -185,21 +185,15 @@ def get_info_post09(leg_list, year, leg_info_df):
                             senatedate = count
                         elif (count % 2 == 0 and leg.startswith("H") == True) or (count % 2 == 1 and leg.startswith("S")==True):
                             housedate = count
-                    elif "AYES" in x:
-                        vote_set = x.split('AYES')[1]
-                        if "FLOOR" in vote_set:
-                            name_list = vote_set.split("FLOOR")[0].replace('NAYS', ',').replace('ABSENT', ',')
-                        elif "FLOOR" not in vote_set:
-                            try:
-                                split1 = re.findall(r'[0-9][0-9]/[0-9][0-9]', vote)[0]
-                            except:
-                                split1 = "FILED"
-                            name_list = vote_set.split(split1)[0].replace('NAYS', ',').replace('ABSENT', ',')
-                        name_list = name_list.split(',')
-                        # Use 50 as cutoff to account for minor errors in the count
-                        if len(name_list) > 50:
+                    elif "AYES" in x or "NAYS" in x:
+                        num_voters = re.findall(r'[0-9][0-9]? ?- ?[0-9][0-9]? ?- ?[0-9][0-9]?', x)
+                        num_voters = num_voters[0].split('-')
+                        num_voters = list(map(lambda x: int(x), num_voters))
+                        num_voters = sum(num_voters[0:])
+                        # Use 60 and 40 as cutoffs to account for minor errors in the count
+                        if num_voters > 60:
                             housedate = count
-                        else:
+                        elif num_voters < 40:
                             senatedate = count
                     count+=1
 
@@ -255,7 +249,7 @@ def get_info_post09(leg_list, year, leg_info_df):
 # Get info for bills before 2009; website/html format changed between 2008 and 2009
 def get_info_pre09(leg_list, year, leg_info_df):
 
-    for leg in leg_list:
+    for leg in leg_list[0:25]:
         link = f'https://legislature.idaho.gov/sessioninfo/{year}/legislation/{str(leg)}/'
         vote_page = requests.get(link)
 
@@ -400,26 +394,20 @@ def get_info_pre09(leg_list, year, leg_info_df):
                 senatedate = None
                 count=0
                 for x in find_chambers:
-                    if "VOICE VOTE" in x:
+                    if "VOICE VOTE" in x.upper():
                         if (count % 2 == 0 and leg.startswith("S") == True) or (count % 2 == 1 and leg.startswith("H")==True):
                             senatedate = count
                         elif (count % 2 == 0 and leg.startswith("H") == True) or (count % 2 == 1 and leg.startswith("S")==True):
                             housedate = count
-                    elif "AYES" in x:
-                        vote_set = x.split('AYES')[1]
-                        if "FLOOR" in vote_set:
-                            name_list = vote_set.split("FLOOR")[0].replace('NAYS', ',').replace('ABSENT', ',')
-                        elif "FLOOR" not in vote_set:
-                            try:
-                                split1 = re.findall(r'\n[0-9][0-9]/[0-9][0-9]', vote)[0]
-                            except:
-                                split1 = "FILED"
-                            name_list = vote_set.split(split1)[0].replace('NAYS', ',').replace('ABSENT', ',')
-                        name_list = name_list.split(',')
-                        # Use 50 as cutoff to account for minor errors in the count
-                        if len(name_list) > 50:
+                    elif "AYES" in x or "NAYS" in x.upper():
+                        num_voters = re.findall(r'[0-9][0-9]? ?- ?[0-9][0-9]? ?- ?[0-9][0-9]?', x)
+                        num_voters = num_voters[0].split('-')
+                        num_voters = list(map(lambda x: int(x), num_voters))
+                        num_voters = sum(num_voters[0:])
+                        # Use 60 and 40 as cutoffs to account for minor errors in the count
+                        if num_voters > 60:
                             housedate = count
-                        else:
+                        elif num_voters < 40:
                             senatedate = count
                     count+=1
 
@@ -499,7 +487,7 @@ def main():
         info = get_info_post09(full_leg_list, year, leg_info_df)
     else:
         info = get_info_pre09(full_leg_list, year, leg_info_df)
-    info.to_csv(f'coding_{year}_votes.csv', index=False)
+    #info.to_csv(f'coding_{year}_votes.csv', index=False)
 
 
 if __name__ == "__main__":
