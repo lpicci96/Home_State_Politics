@@ -186,7 +186,7 @@ def get_info_post09(leg_list, year, leg_info_df):
                         elif (count % 2 == 0 and leg.startswith("H") == True) or (count % 2 == 1 and leg.startswith("S")==True):
                             housedate = count
                     elif "AYES" in x or "NAYS" in x:
-                        num_voters = re.findall(r'[0-9][0-9]? ?- ?[0-9][0-9]? ?- ?[0-9][0-9]?', x)
+                        num_voters = re.findall(r'[0-9][0-9]? ?--? ?[0-9][0-9]? ?--? ?[0-9][0-9]?', x)
                         num_voters = num_voters[0].split('-')
                         num_voters = list(map(lambda x: int(x), num_voters))
                         num_voters = sum(num_voters[0:])
@@ -400,7 +400,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
                         elif (count % 2 == 0 and leg.startswith("H") == True) or (count % 2 == 1 and leg.startswith("S")==True):
                             housedate = count
                     elif "AYES" in x or "NAYS" in x.upper():
-                        num_voters = re.findall(r'[0-9][0-9]? ?- ?[0-9][0-9]? ?- ?[0-9][0-9]?', x)
+                        num_voters = re.findall(r'[0-9][0-9]? ?--? ?[0-9][0-9]? ?--? ?[0-9][0-9]?', x)
                         num_voters = num_voters[0].split('-')
                         num_voters = list(map(lambda x: int(x), num_voters))
                         num_voters = sum(num_voters[0:])
