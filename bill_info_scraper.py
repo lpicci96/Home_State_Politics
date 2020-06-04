@@ -74,7 +74,7 @@ def get_info_post09(leg_list, year, leg_info_df):
 
             # Get governor's action
             gov_action = ""
-            if "governor" in outcome.lower() or "became law" in outcome.lower():
+            if "law" in short_outcome.lower() or "veto" in short_outcome.lower():
                 if "sign" in outcome.lower() and 'without' not in outcome.lower():
                     gov_action = 'Signed'
                 elif "veto" in short_outcome.lower() and "line item" not in short_outcome.lower():
@@ -316,7 +316,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
 
             # Get governor's action
             gov_action = ""
-            if "veto" in short_outcome.lower() or "law" in short_outcome.lower() or "adopted" in short_outcome.lower():
+            if "law" in short_outcome.lower() or "veto" in short_outcome.lower():
                 if "sign" in outcome.lower() and 'without' not in outcome.lower():
                     gov_action = 'Signed'
                 elif "veto" in short_outcome.lower() and "line item" not in short_outcome.lower():
@@ -487,7 +487,7 @@ def main():
         info = get_info_post09(full_leg_list, year, leg_info_df)
     else:
         info = get_info_pre09(full_leg_list, year, leg_info_df)
-    #info.to_csv(f'coding_{year}_votes.csv', index=False)
+    info.to_csv(f'coding_{year}_votes.csv', index=False)
 
 
 if __name__ == "__main__":
