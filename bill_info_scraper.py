@@ -233,6 +233,7 @@ def get_info_post09(leg_list, year, leg_info_df):
             fs_list = ''
             gov_action = ''
             desc = ''
+            date_dict = {'house':'', 'senate':''}
             # 404 note
             notes = '404 Error'
 
@@ -327,6 +328,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
                     gov_action = 'Passed without signature'
 
 
+
             # Get legislative co-sponsors
             # No cosponsor info pre-2009
 
@@ -401,6 +403,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
                             housedate = count
                     elif "AYES" in x or "NAYS" in x.upper():
                         num_voters = re.findall(r'[0-9][0-9]? ?--? ?[0-9][0-9]? ?--? ?[0-9][0-9]?', x)
+                        num_voters = list(map(lambda x: x.replace('--', '-'), num_voters))
                         num_voters = num_voters[0].split('-')
                         num_voters = list(map(lambda x: int(x), num_voters))
                         num_voters = sum(num_voters[0:])
@@ -455,6 +458,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
             fs_list = ''
             gov_action = ''
             desc = ''
+            date_dict = {'house':'', 'senate':''}
             # 404 note
             notes = '404 Error'
 
