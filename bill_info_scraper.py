@@ -126,11 +126,14 @@ def get_info_post09(leg_list, year, leg_info_df):
                     sponsor = sponsor.strip('-')
                     sponsor = sponsor.replace('Title', '')
                     split = False
-                    if "," in sponsor:
-                        sponsor = sponsor.split(',')
+                    if "," in sponsor and "&" in sponsor:
+                        sponsor = re.split(',|&', sponsor)
                         split = True
-                    elif "&" in sponsor:
+                    elif "&" in sponsor and "," not in sponsor:
                         sponsor = sponsor.split('&')
+                        split = True
+                    elif "," in sponsor and "&" not in sponsor:
+                        sponsor = sponsor.split(',')
                         split = True
                     if split == True:
                         for person in sponsor:
@@ -343,11 +346,14 @@ def get_info_pre09(leg_list, year, leg_info_df):
                     sponsor = sponsor.strip('Floor Sponsor').strip('–').strip('-')
                     sponsor = sponsor.replace('Title', '')
                     split = False
-                    if "," in sponsor:
-                        sponsor = sponsor.split(',')
+                    if "," in sponsor and "&" in sponsor:
+                        sponsor = re.split(',|&', sponsor)
                         split = True
-                    elif "&" in sponsor:
+                    elif "&" in sponsor and "," not in sponsor:
                         sponsor = sponsor.split('&')
+                        split = True
+                    elif "," in sponsor and "&" not in sponsor:
+                        sponsor = sponsor.split(',')
                         split = True
                     if split == True:
                         for person in sponsor:
@@ -378,8 +384,7 @@ def get_info_pre09(leg_list, year, leg_info_df):
                                 person = f'Representative {sponsor}'
                         fs_list.append(person)
                 count+=1
-            length = len(fs_list)
-            if length == 0:
+            if len(fs_list) == 0:
                 fs_list = ''
 
 
