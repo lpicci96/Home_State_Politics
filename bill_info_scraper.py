@@ -44,6 +44,7 @@ def get_info_post09(leg_list, year, leg_info_df):
             short_outcome = mini_data_soup.find_all(id = f'bill{leg}a')
         short_outcome = ((short_outcome[0]).find_all('td'))[3].text
 
+
         if vote_page.status_code != 404:
 
             soup = BeautifulSoup(vote_page.content, "html.parser")
@@ -56,6 +57,7 @@ def get_info_post09(leg_list, year, leg_info_df):
             desc = desc.replace('“', '"')
             desc = desc.replace('”', '"')
             desc = desc.strip()
+            desc = desc.replace("â€™", "'")
 
 
             # Get long outcome
@@ -70,6 +72,8 @@ def get_info_post09(leg_list, year, leg_info_df):
                 outcome = outcome.lstrip('0123456789/; ')
             if "AYES" in outcome:
                 outcome = (outcome.split('AYES'))[0]
+            # Fix apostrophe issue
+            outcome = outcome.replace("â€™", "'")
 
 
             # Get governor's action
@@ -172,7 +176,7 @@ def get_info_post09(leg_list, year, leg_info_df):
             # Get vote dates
             dates = (soup.find_all(class_="bill-table"))[2].text
             dates = dates.replace(u'\xa0', " ").replace('\n', ' ').upper()
-            find_chambers = dates.replace('ADOPTED', 'SPLIT_POINT').replace('FAILED', 'SPLIT_POINT').replace('PASSED', 'SPLIT_POINT')
+            find_chambers = dates.replace('ADOPTED', 'SPLIT_POINT').replace('FAILED -', 'SPLIT_POINT').replace('PASSED', 'SPLIT_POINT')
             date_dict = {'house': '', 'senate': ''}
             try:
                 find_chambers = find_chambers.split('SPLIT_POINT')[1:]
@@ -182,13 +186,14 @@ def get_info_post09(leg_list, year, leg_info_df):
                 housedate = None
                 senatedate = None
                 count=0
+                find_chambers = [x for x in find_chambers if "VOICE VOTE" in x or "AYES –" in x or "NAYS –" in x]
                 for x in find_chambers:
                     if "VOICE VOTE" in x:
                         if (count % 2 == 0 and leg.startswith("S") == True) or (count % 2 == 1 and leg.startswith("H")==True):
                             senatedate = count
                         elif (count % 2 == 0 and leg.startswith("H") == True) or (count % 2 == 1 and leg.startswith("S")==True):
                             housedate = count
-                    elif "AYES" in x or "NAYS" in x:
+                    elif "AYES –" in x or "NAYS –" in x:
                         num_voters = re.findall(r'[0-9][0-9]? ?--? ?[0-9][0-9]? ?--? ?[0-9][0-9]?', x)
                         num_voters = num_voters[0].split('-')
                         num_voters = list(map(lambda x: int(x), num_voters))
@@ -315,7 +320,6 @@ def get_info_pre09(leg_list, year, leg_info_df):
             if "NAYS" in outcome:
                 outcome = (outcome.split('NAYS'))[0]
                 outcome = outcome.strip().strip(';')
-            outcome = outcome.replace("  ", " ")
 
 
             # Get governor's action
@@ -490,13 +494,11 @@ def main():
     leg_info_df = pd.DataFrame(columns = ["bill_num", "amended", "short_outcome", "final_action", "house_vote_date", "senate_vote_date", "leg_cosponsors", "floor_sponsors", "gov_action", "short_desc", "long_desc", "topics_all", "topics_coded", "t1", "t1_aye", "t2", "t2_aye", "t3", "t3_aye", "t4", "t4_aye", "t5", "t5_aye", "bill_group", "link", "notes"])
 
     full_leg_list = vote_scraping.get_leg(year)
-    #full_leg_list = ['H0312', 'H0325', 'H0342', 'HJM012', 'HJM014', 'S1218']
-    #full_leg_list = ['H0001', 'H0002', 'H0010', 'HCR004', 'H0063', 'S1001', 'S1025', 'SJR101']
     if year > 2008:
         info = get_info_post09(full_leg_list, year, leg_info_df)
     else:
         info = get_info_pre09(full_leg_list, year, leg_info_df)
-    info.to_csv(f'coding_{year}_votes.csv', index=False)
+    info.to_csv(f'bill_info_{year}.csv', index=False, encoding='utf-8')
 
 
 if __name__ == "__main__":
