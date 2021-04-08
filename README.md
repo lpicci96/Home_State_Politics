@@ -1,2 +1,2 @@
-# Gem_State_Politics
-Web scraping the Idaho State Legislature website for bill information, vote counts, and legislator information
+# Home_State_Politics
+Web scraping the state legislative websites for bill information, vote counts, and legislator details
