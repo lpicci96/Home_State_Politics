@@ -11,7 +11,7 @@ with open('./sample.json', 'r') as openfile:
     json_obj = json.load(openfile)
 print(json_obj)
 
-for i in json_obj:
+for i in json_obj[0:1]:
     print(i)
 
 
