@@ -4,13 +4,11 @@ from helium import *
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from urllib.parse import urljoin
-import requests
-import time
-import json
+import requests, time, json
 from furl import furl
 from selenium.webdriver import Firefox
 from selenium.webdriver.support.ui import Select
-
+from urllib.parse import urljoin
 
 
 driver = Firefox(executable_path='.\geckodriver.exe')
@@ -18,12 +16,23 @@ main_link = 'https://lrl.texas.gov/legeLeaders/members/membersearch.cfm'
 f = furl(main_link)
 a = f'{str(f.origin)}/{f.path.segments[0]}/{f.path.segments[1]}/'
 helium.set_driver(driver)
+male_female = {'male':2, 'female':3}
 go_to(main_link)
-
 gender_select = driver.find_element_by_xpath("//select[@name='gender']/option[3]").click()
-#driver.find_element_by_xpath("//*[@id='search']/table/tbody/tr[1]/td[2]/select/option[3]").click()
+driver.find_element_by_xpath("//*[@id='search']/table/tbody/tr[1]/td[2]/select/option[2]").click()
+#click(RadioButton("Search"))
 driver.find_element_by_xpath("//input[@type='SUBMIT']").click()
-print(find_all(S("//td[contains(results")))
+member_links_a_tags = find_all(S("//a[contains(@href, 'memberID')]"))
+member_links = [ BeautifulSoup(str(link), 'lxml').find('a').get('href') for link in member_links_a_tags]
+print(member_links)
+
+# with open("female_links.json", "w") as outfile:
+#     json.dump(member_links, outfile)
+
+
+
+
+#print(find_all(S("//td[contains(results")))
 
 
 #print(gender_select.options)
